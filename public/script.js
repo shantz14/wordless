@@ -2,10 +2,17 @@ console.log("Script Loaded");
 
 const GUESSES = 5;
 let currentGuess = 0;
+const url = "localhost:4000/";
 
 // TODO word load from database!!!
 let word = "GAMER";
 const submitButton = document.getElementById("submit");
+let nextLetter;
+
+document.addEventListener("DOMContentLoaded", function() {
+    populateGame();    
+    document.getElementById("letter00").focus();
+});
 
 submitButton.addEventListener("click", function() {
     const baseId = "letter" + currentGuess;
@@ -19,13 +26,47 @@ submitButton.addEventListener("click", function() {
         const letter = box.value
         guess = guess + letter;
     }
-    colorMyBoxes(boxes, guess);
-    currentGuess++;
+
+    if (guess.length == word.length) {
+        colorMyBoxes(boxes, guess);
+        currentGuess++;
+        
+        if (guess === word) {
+            win();
+        } else if (currentGuess == GUESSES) {
+            lose();
+        }
+
+        nextLetter.focus();
+    }
 });
+
+function win() {
+    /*winData = {
+        win: true,
+        guesses: currentGuess,
+        wordLength: word.length
+    };
+    jsonData = JSON.stringify(winData);
+    fetch("/api/win", {
+        method: "POST",
+        body: jsonData
+    })*/
+    fetch("/api/win")
+        .then(res => res.json())
+        .then(data => console.log(data))
+        .then(error => console.error(error));
+}
+
+function lose() {
+    fetch("/api/lose")
+        .then(res => res.json())
+        .then(data => console.log(data))
+        .then(error => console.error(error));
+}
 
 document.addEventListener("keypress", function(e) {
     if (e.key === "Enter") {
-        console.log("here")
         e.preventDefault();
         submitButton.click();
     }
@@ -71,11 +112,6 @@ function countLetters() {
     }
     return letterCounts;
 }
-
-document.addEventListener("DOMContentLoaded", function() {
-    populateGame();    
-    
-});
 
 function populateGame() {
     let gameContainer = document.getElementById("gameContainer");
@@ -127,6 +163,8 @@ function validateInput(letter, value) {
     }
 
     var newId = "letter" + row.toString() + col.toString();
-    const nextLetter = document.getElementById(newId);
-    nextLetter.focus();
+    nextLetter = document.getElementById(newId);
+    if (row == currentGuess) {
+        nextLetter.focus();
+    }
 }
