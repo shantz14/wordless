@@ -23,6 +23,14 @@ submitButton.addEventListener("click", function() {
     currentGuess++;
 });
 
+document.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        console.log("here")
+        e.preventDefault();
+        submitButton.click();
+    }
+})
+
 function colorMyBoxes(boxes, guess) {
     letterCounts = countLetters();
 
@@ -31,24 +39,24 @@ function colorMyBoxes(boxes, guess) {
         lettersCounted[guess[i]] = 0;
     }
     
+    //sequential checks
+    //greys
+    for (let i = 0; i < guess.length; i++) {
+        boxes[i].style.backgroundColor = "grey";
+    }
+    //greens
     for (let i = 0; i < guess.length; i++) {
         if (guess[i] == word[i]) {
             boxes[i].style.backgroundColor = "green";
-        } else if (word.includes(guess[i])) {
-            for (let x = 0; x < guess.length; x++) {
-                if (guess[x] == word[x]) {
-                    boxes[i].style.backgroundColor = "grey";
-                }
-            }
-            if (lettersCounted[guess[i]] < letterCounts[guess[i]]) {
-                boxes[i].style.backgroundColor = "yellow";
-            } else {
-                boxes[i].style.backgroundColor = "grey";
-            }
-        } else {
-            boxes[i].style.backgroundColor = "grey";
+            lettersCounted[guess[i]]++;
         }
-        lettersCounted[guess[i]]++;
+    }
+    //yellows
+    for (let i = 0; i < guess.length; i++) {
+        if (lettersCounted[guess[i]] < letterCounts[guess[i]] && word.includes(guess[i]) && boxes[i].style.backgroundColor === "grey") {
+            boxes[i].style.backgroundColor = "yellow";
+            lettersCounted[guess[i]]++;
+        }
     }
 }
 
