@@ -42,7 +42,7 @@ submitButton.addEventListener("click", function() {
 });
 
 function win() {
-    /*winData = {
+    winData = {
         win: true,
         guesses: currentGuess,
         wordLength: word.length
@@ -50,19 +50,31 @@ function win() {
     jsonData = JSON.stringify(winData);
     fetch("/api/win", {
         method: "POST",
+        headers: {"Content-Type": "application/json"},
         body: jsonData
-    })*/
-    fetch("/api/win")
-        .then(res => res.json())
-        .then(data => console.log(data))
-        .then(error => console.error(error));
+    })
+    .then(response => response.json())
+    .then(data => {
+        window.location.href = data.redirect
+    })
 }
 
 function lose() {
-    fetch("/api/lose")
-        .then(res => res.json())
-        .then(data => console.log(data))
-        .then(error => console.error(error));
+    winData = {
+        win: false,
+        guesses: currentGuess,
+        wordLength: word.length
+    };
+    jsonData = JSON.stringify(winData);
+    fetch("/api/lose", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: jsonData
+    })
+    .then(response => response.json())
+    .then(data => {
+        window.location.href = data.redirect
+    })
 }
 
 document.addEventListener("keypress", function(e) {
@@ -133,7 +145,6 @@ function populateWord(wordContainer) {
     for (let c = 0; c < word.length; c++) {
         let newLetter = letterDiv.cloneNode(true);
         newLetter.id = "letter" + wordContainer.id[wordContainer.id.length - 1] + c;
-        console.log(newLetter.id);
         wordContainer.appendChild(newLetter);
     }
 }

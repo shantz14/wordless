@@ -14,16 +14,19 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, "public", "wordless", "index.html")) 
 })
 
-app.get('/api/win', (req, res) => {
-    msg = "You win pal";
-    jsonMsg = JSON.stringify(msg);
-    res.send(jsonMsg);
+app.get('/leaderboard', (req, res) => {
+    console.log("here")
+    res.sendFile(path.join(__dirname, "public", "wordless", "leaderboard", "index.html")) 
 })
 
-app.get('/api/lose', (req, res) => {
-    msg = "You lose bud";
-    jsonMsg = JSON.stringify(msg);
-    res.send(jsonMsg);
+app.post('/api/win', (req, res) => {
+    console.log(req.body.guesses)
+    res.send({redirect: "/leaderboard"})
+})
+
+app.post('/api/lose', (req, res) => {
+    console.log(req.body.guesses)
+    res.send({redirect: "/leaderboard"})
 })
 
 app.listen(port, () => {
